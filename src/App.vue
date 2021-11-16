@@ -10,6 +10,9 @@
         <router-link to="/">Home</router-link> |
         <router-link @click.native="logout" to="#">Logout</router-link>
       </div>
+      <div v-if="isLogin">
+        <h3>{{ tokenInfo.username }} 님 환영합니다.</h3>
+      </div>
     </div>
     <router-view />
   </div>
@@ -34,11 +37,14 @@ export default {
     const token = localStorage.getItem("jwt");
     // 자동 로그인
     if (token) {
+      const atob = (str) => Buffer.from(str, "base64").toString("binary"); // atob 가 deprecated 이므로 대신 사용
       this.$store.state.isLogin = true;
+      this.$store.state.tokenInfo = JSON.parse(atob(token.split(".")[1]));
+      console.log(this.$store.state.tokenInfo);
     }
   },
   computed: {
-    ...mapState(["isLogin"]),
+    ...mapState(["isLogin", "tokenInfo"]),
   },
 };
 </script>
